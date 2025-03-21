@@ -1,5 +1,6 @@
 
 import { SubpaisaTransaction } from "@/models/Transaction";
+import { Transaction } from "@/utils/mockData";
 
 // The raw transaction data
 export const rawTransactionData: SubpaisaTransaction[] = [
@@ -161,15 +162,38 @@ export const rawTransactionData: SubpaisaTransaction[] = [
 ];
 
 // Function to convert the raw data to the format expected by the Transaction component
-export const getFormattedTransactions = () => {
+export const getFormattedTransactions = (): Transaction[] => {
   return rawTransactionData.map((transaction, index) => {
-    // Convert to expected format
+    // Ensure status is one of the allowed values
+    const status: "completed" | "pending" | "failed" | "flagged" = 
+      transaction.is_fraud ? 'flagged' : 'completed';
+    
+    // Map channel to allowed values
+    const channel: 'mobile' | 'web' | 'atm' | 'in-store' | 'api' = 
+      transaction.transaction_channel.toLowerCase() === 'mobile' 
+        ? 'mobile' 
+        : 'web';
+    
+    // Create a valid paymentMode
+    const paymentMode: 'credit_card' | 'debit_card' | 'bank_transfer' | 'upi' | 'wallet' = 
+      transaction.transaction_payment_mode_anonymous === 10 ? 'credit_card' :
+      transaction.transaction_payment_mode_anonymous === 11 ? 'debit_card' :
+      transaction.transaction_payment_mode_anonymous === 0 ? 'bank_transfer' :
+      transaction.transaction_payment_mode_anonymous === 2 ? 'upi' : 'wallet';
+    
+    // Create a valid paymentGateway
+    const paymentGateway: 'stripe' | 'paypal' | 'braintree' | 'razorpay' | 'internal' = 
+      transaction.payment_gateway_bank_anonymous === 6 ? 'razorpay' :
+      transaction.payment_gateway_bank_anonymous === 0 ? 'stripe' :
+      transaction.payment_gateway_bank_anonymous === 5 ? 'paypal' :
+      transaction.payment_gateway_bank_anonymous === 14 ? 'braintree' : 'internal';
+    
     return {
       id: transaction.transaction_id_anonymous,
       amount: transaction.transaction_amount,
       currency: "INR",
       timestamp: new Date(transaction.transaction_date).toISOString(),
-      status: transaction.is_fraud ? 'flagged' : 'completed',
+      status: status,
       payer: {
         id: `payer-${index}`,
         name: `Payer ${index} (${transaction.payer_email_anonymous.substring(0, 8)}...)`,
@@ -180,9 +204,9 @@ export const getFormattedTransactions = () => {
         name: `Payee ${transaction.payee_id_anonymous}`,
         bank: `Bank ${transaction.payment_gateway_bank_anonymous}`
       },
-      channel: transaction.transaction_channel === 'mobile' ? 'mobile' : 'web',
-      paymentMode: `mode_${transaction.transaction_payment_mode_anonymous}`,
-      paymentGateway: `gateway_${transaction.payment_gateway_bank_anonymous}`,
+      channel: channel,
+      paymentMode: paymentMode,
+      paymentGateway: paymentGateway,
       is_fraud_predicted: Boolean(transaction.is_fraud),
       is_fraud_reported: Boolean(transaction.is_fraud),
       fraud_score: transaction.is_fraud ? 0.85 : 0.15,

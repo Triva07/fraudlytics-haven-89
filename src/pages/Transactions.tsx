@@ -7,10 +7,11 @@ import { getFormattedTransactions, getTransactionStats } from '@/data/subpaisaTr
 import Card from '@/components/ui-custom/Card';
 import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, XAxis, YAxis } from 'recharts';
 import { IndianRupee, Calendar, CreditCard, Smartphone, Layout } from 'lucide-react';
+import { Transaction } from '@/utils/mockData';
 
 const Transactions = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState({
     totalTransactions: 0,
     fraudulentTransactions: 0,

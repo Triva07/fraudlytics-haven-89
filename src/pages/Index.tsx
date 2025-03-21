@@ -10,12 +10,13 @@ import { getFormattedTransactions, getTransactionStats } from '@/data/subpaisaTr
 import { 
   calculateFraudMetrics,
   generateFraudByCategory,
-  generateTimeSeriesData
+  generateTimeSeriesData,
+  Transaction
 } from '@/utils/mockData';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [metrics, setMetrics] = useState(null);
   const [channelData, setChannelData] = useState([]);
   const [paymentModeData, setPaymentModeData] = useState([]);
