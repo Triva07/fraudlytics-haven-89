@@ -63,7 +63,7 @@ const Rules = () => {
         toast({
           title: `Rule ${newState ? 'enabled' : 'disabled'}`,
           description: `"${rule.name}" has been ${newState ? 'enabled' : 'disabled'}`,
-          variant: newState ? 'success' : 'default',
+          variant: "default", // Changed from "success" to "default"
         });
         return { ...rule, enabled: newState };
       }
