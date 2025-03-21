@@ -2,7 +2,7 @@
 import { toast } from "sonner";
 import { Transaction } from "./mockData";
 
-const API_BASE_URL = "http://localhost:3000"; // Update this to your actual backend URL
+const API_BASE_URL = "http://localhost:3000"; // This matches your Express server port
 
 interface FraudDetectionResponse {
   transaction_id: string;
@@ -27,11 +27,15 @@ export const detectFraud = async (transaction: Transaction): Promise<FraudDetect
       },
       body: JSON.stringify({
         transaction_id: transaction.id,
-        payer_id: transaction.payer.id, // Fixed: use payer.id instead of payerId
+        payer_id: transaction.payer.id,
         amount: transaction.amount,
-        // Include any other relevant transaction data
+        // Include other data that matches your backend schema
         payment_method: transaction.paymentMode,
         channel: transaction.channel,
+        // Add these fields to match your backend's velocity check logic
+        recentTransactions: 0, // This would need to be determined by your frontend
+        country: transaction.payer.country || 'IN', // Default to India if not available
+        ipCountry: transaction.payer.country || 'IN', // You might want to get actual IP country
         timestamp: new Date().toISOString()
       }),
     });
@@ -49,7 +53,7 @@ export const detectFraud = async (transaction: Transaction): Promise<FraudDetect
     // Return a fallback object if the API call fails
     return {
       transaction_id: transaction.id,
-      payer_id: transaction.payer.id, // Fixed: use payer.id instead of payerId
+      payer_id: transaction.payer.id,
       amount: transaction.amount,
       is_fraud_predicted: false,
       fraud_source: 'local',
