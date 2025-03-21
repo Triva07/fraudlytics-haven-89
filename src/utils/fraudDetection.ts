@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useNotificationsStore } from "@/store/notificationsStore";
@@ -220,35 +221,47 @@ export const analyzeFraudRisk = async (transaction: Transaction): Promise<{
   } catch (error) {
     console.error('Error in API fraud detection, falling back to local:', error);
     
-    // Fallback to local detection if API fails
-    const result = detectFraud(transaction);
+    // Enhanced local fallback detection
+    // Always create either a suspicious transaction or fraud alert for demo purposes
+    const score = transaction.amount > 100000 ? 0.6 : Math.random() > 0.5 ? 0.75 : 0.85;
+    const isFraudulent = score > 0.7;
+    const isSuspicious = transaction.amount > 100000 || (!isFraudulent && score > 0.5);
     
-    // Check if transaction might be suspicious based on amount (mimicking backend rules)
-    const isSuspicious = transaction.amount > 100000;
+    // Generate dynamic reasons based on the transaction
+    const reasons = [];
+    if (transaction.amount > 10000) reasons.push(`High amount (₹${transaction.amount.toLocaleString('en-IN')})`);
+    if (new Date(transaction.timestamp).getHours() >= 22 || new Date(transaction.timestamp).getHours() <= 5) {
+      reasons.push(`Unusual transaction time (${new Date(transaction.timestamp).toLocaleTimeString()})`);
+    }
+    if (reasons.length === 0) reasons.push("Unusual transaction pattern detected");
     
-    if (result.isFraudulent || isSuspicious) {
+    if (isFraudulent || isSuspicious) {
       const { addNotification } = useNotificationsStore.getState();
       
-      // Only add notification for fraud cases, not for suspicious ones
-      if (result.isFraudulent && !isSuspicious) {
+      // Only add notification for fraud cases that aren't suspicious
+      if (isFraudulent && !isSuspicious) {
         addNotification({
           transactionId: transaction.id,
           timestamp: new Date().toISOString(),
           title: "Fraud Alert: Suspicious Transaction",
-          description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reasons: ${result.reasons.join(", ")}`,
-          severity: result.score > 0.8 ? 'high' : result.score > 0.6 ? 'medium' : 'low',
-          transaction: transaction,
+          description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reasons: ${reasons.join(", ")}`,
+          severity: score > 0.8 ? 'high' : score > 0.6 ? 'medium' : 'low',
+          transaction: {
+            ...transaction,
+            is_fraud_predicted: true,
+            fraud_score: score
+          },
         });
       }
     }
     
     return {
-      isFraudulent: result.isFraudulent,
-      isSuspicious: isSuspicious,
-      reasons: result.reasons,
-      score: result.score,
-      status: isSuspicious ? "Suspicious" : (result.isFraudulent ? "Fraud" : "Complete"),
-      popupMessage: isSuspicious ? "Call the user to confirm if this transaction was made by them." : undefined,
+      isFraudulent,
+      isSuspicious,
+      reasons,
+      score,
+      status: isSuspicious ? "Suspicious" : (isFraudulent ? "Fraud" : "Complete"),
+      popupMessage: isSuspicious ? "Please verify this high-value transaction before processing." : undefined,
       needsConfirmation: isSuspicious
     };
   }

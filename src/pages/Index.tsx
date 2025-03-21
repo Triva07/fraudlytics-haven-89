@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
 import MetricsCards from '@/components/dashboard/MetricsCards';
 import TransactionTable from '@/components/dashboard/TransactionTable';
@@ -14,7 +15,7 @@ import {
 } from '@/utils/mockData';
 import { Button } from '@/components/ui/button';
 import { useNotificationsStore } from '@/store/notificationsStore';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { analyzeFraudRisk } from '@/utils/fraudDetection';
 import SuspiciousTransactionDialog from '@/components/fraud/SuspiciousTransactionDialog';
@@ -39,6 +40,7 @@ const Index = () => {
     fraudScore: number;
     popupMessage?: string;
   } | null>(null);
+  const [isGeneratingAlert, setIsGeneratingAlert] = useState(false);
   
   // Get unreviewed notifications once on component mount
   useEffect(() => {
@@ -89,25 +91,38 @@ const Index = () => {
   }, []);
 
   const addDemoAlert = async () => {
-    const fraudulentTransactions = transactions.filter(t => {
-      const alreadyNotified = unreviewedNotifications.some(
-        n => n.transactionId === t.id
-      );
-      return t.is_fraud_predicted && !alreadyNotified;
-    });
+    if (isGeneratingAlert) return;
     
-    if (fraudulentTransactions.length === 0) {
-      // If no fraudulent transactions, create a high-value transaction
-      // that will be flagged as suspicious by our rules (amount > 100,000)
+    setIsGeneratingAlert(true);
+    
+    try {
+      const fraudulentTransactions = transactions.filter(t => {
+        const alreadyNotified = unreviewedNotifications.some(
+          n => n.transactionId === t.id
+        );
+        return t.is_fraud_predicted && !alreadyNotified;
+      });
+      
+      // Create a high-value transaction that will be flagged as suspicious
       const highValueTransaction = {
-        ...transactions[0],
+        ...transactions[Math.floor(Math.random() * transactions.length)],
         id: `tx-${Date.now()}`,
-        amount: 150000, // ₹1,50,000 (high value that should trigger suspicious)
+        amount: 150000 + Math.floor(Math.random() * 50000), // Random high value (₹1,50,000 to ₹2,00,000)
         timestamp: new Date().toISOString()
       };
       
+      toast.info("Analyzing transaction...", {
+        description: "Please wait while we verify the transaction"
+      });
+      
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       // Analyze the transaction using our backend-compatible detection
       const result = await analyzeFraudRisk(highValueTransaction);
+      
+      // Update the list of unreviewed notifications
+      setUnreviewedNotifications(useNotificationsStore.getState().getUnreviewedNotifications());
       
       if (result.needsConfirmation) {
         setSuspiciousTransaction(highValueTransaction);
@@ -120,48 +135,27 @@ const Index = () => {
         return;
       }
       
-      toast.info("No suspicious transactions to simulate", {
-        description: "All existing transactions passed fraud checks"
-      });
-      return;
-    }
-    
-    const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
-    
-    // First check if it's a high amount transaction
-    const result = await analyzeFraudRisk(randomTransaction);
-    
-    if (result.needsConfirmation) {
-      setSuspiciousTransaction(randomTransaction);
-      setFraudDetails({
-        fraudReason: result.reasons[0] || "Suspicious transaction",
-        fraudScore: result.score, 
-        popupMessage: result.popupMessage
-      });
-      setShowSuspiciousDialog(true);
-      return;
-    }
-    
-    // Otherwise, proceed with regular notification
-    addNotification({
-      transactionId: randomTransaction.id,
-      timestamp: new Date().toISOString(),
-      title: "New Fraud Alert: Suspicious Transaction",
-      description: `Transaction ${randomTransaction.id.substring(0, 8)}... has been flagged as potentially fraudulent with ${Math.round(randomTransaction.fraud_score * 100)}% confidence score.`,
-      severity: randomTransaction.fraud_score > 0.8 ? 'high' : randomTransaction.fraud_score > 0.6 ? 'medium' : 'low',
-      transaction: randomTransaction,
-    });
-    
-    // Update our local state of unreviewed notifications
-    setUnreviewedNotifications(useNotificationsStore.getState().getUnreviewedNotifications());
-    
-    toast.warning("New fraud alert", {
-      description: "A transaction has been flagged for review",
-      action: {
-        label: "View",
-        onClick: () => document.getElementById("notifications-button")?.click()
+      if (result.isFraudulent) {
+        toast.warning("New fraud alert", {
+          description: "A transaction has been flagged for review",
+          action: {
+            label: "View",
+            onClick: () => document.getElementById("notifications-button")?.click()
+          }
+        });
+      } else {
+        toast.success("Transaction verified", {
+          description: "No suspicious activity detected"
+        });
       }
-    });
+    } catch (error) {
+      console.error("Error generating demo alert:", error);
+      toast.error("Failed to generate alert", {
+        description: "Please try again"
+      });
+    } finally {
+      setIsGeneratingAlert(false);
+    }
   };
 
   const handleSuspiciousTransactionAction = () => {
@@ -215,30 +209,68 @@ const Index = () => {
       >
         <div className="flex justify-end mb-4">
           <Button 
-            variant="outline" 
+            variant={isGeneratingAlert ? "outline" : "default"}
             onClick={addDemoAlert}
-            className="flex items-center space-x-2"
+            className={`flex items-center space-x-2 transition-all duration-300 ${isGeneratingAlert ? 'bg-muted' : 'bg-primary hover:bg-primary/90'}`}
+            disabled={isGeneratingAlert}
           >
-            <ShieldAlert className="w-4 h-4 text-fraud-dark" />
-            <span>Demo Fraud Alert</span>
+            {isGeneratingAlert ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                <span>Generating Alert...</span>
+              </>
+            ) : (
+              <>
+                <ShieldAlert className="w-4 h-4 mr-2 text-white" />
+                <span>Demo Fraud Alert</span>
+              </>
+            )}
           </Button>
         </div>
         
-        {metrics && <MetricsCards metrics={metrics} />}
+        <AnimatePresence>
+          {metrics && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <MetricsCards metrics={metrics} />
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <FraudGraph data={timeSeriesData} />
-          <AnalyticsSection 
-            channelData={channelData}
-            paymentModeData={paymentModeData}
-            paymentGatewayData={[{ category: "SubPaisa", predictedCount: transactions.length, reportedCount: transactions.filter(t => t.is_fraud_reported).length }]}
-          />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <FraudGraph data={timeSeriesData} />
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <AnalyticsSection 
+              channelData={channelData}
+              paymentModeData={paymentModeData}
+              paymentGatewayData={[{ category: "SubPaisa", predictedCount: transactions.length, reportedCount: transactions.filter(t => t.is_fraud_reported).length }]}
+            />
+          </motion.div>
         </div>
         
-        <div className="mb-8">
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
           <h3 className="text-lg font-medium mb-4">Recent Transactions</h3>
           <TransactionTable transactions={transactions.slice(0, 10)} />
-        </div>
+        </motion.div>
         
         {/* Suspicious Transaction Dialog */}
         <SuspiciousTransactionDialog
