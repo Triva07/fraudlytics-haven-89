@@ -16,6 +16,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useNotificationsStore } from '@/store/notificationsStore';
 import { ShieldAlert } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Verify API key is properly initialized
 console.log("Gemini API Key available:", !!import.meta.env.VITE_GEMINI_API_KEY);
@@ -26,7 +27,6 @@ const Index = () => {
   const [metrics, setMetrics] = useState(null);
   const [channelData, setChannelData] = useState([]);
   const [paymentModeData, setPaymentModeData] = useState([]);
-  const [paymentGatewayData, setPaymentGatewayData] = useState([]);
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [stats, setStats] = useState(null);
   const addNotification = useNotificationsStore(state => state.addNotification);
@@ -35,14 +35,33 @@ const Index = () => {
     // Simulate loading data
     const timer = setTimeout(() => {
       const subpaisaTransactions = getFormattedTransactions();
-      setTransactions(subpaisaTransactions);
-      setMetrics(calculateFraudMetrics(subpaisaTransactions));
-      setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
-      setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
-      setPaymentGatewayData(generateFraudByCategory(subpaisaTransactions, 'paymentGateway'));
-      setTimeSeriesData(generateTimeSeriesData(subpaisaTransactions, 30));
+      
+      // Make sure all transactions are from SubPaisa payment gateway
+      const updatedTransactions = subpaisaTransactions.map(t => ({
+        ...t,
+        paymentGateway: 'subpaisa' as 'subpaisa'
+      }));
+      
+      setTransactions(updatedTransactions);
+      
+      // Calculate metrics for consistency between dashboard and analytics
+      const calculatedMetrics = calculateFraudMetrics(updatedTransactions);
+      setMetrics(calculatedMetrics);
+      
+      setChannelData(generateFraudByCategory(updatedTransactions, 'channel'));
+      setPaymentModeData(generateFraudByCategory(updatedTransactions, 'paymentMode'));
+      
+      // Generate time series data
+      const timeSeries = generateTimeSeriesData(updatedTransactions, 30);
+      setTimeSeriesData(timeSeries);
+      
       setStats(getTransactionStats());
       setIsLoading(false);
+      
+      // Show success toast
+      toast.success("Dashboard data loaded successfully", {
+        description: "Showing SubPaisa transaction analytics"
+      });
     }, 1500);
 
     return () => clearTimeout(timer);
@@ -56,12 +75,24 @@ const Index = () => {
     const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
     
     addNotification({
+      id: `fraud-${Date.now()}`,
       transactionId: randomTransaction.id,
       timestamp: new Date().toISOString(),
       title: "New Fraud Alert: Suspicious Transaction",
       description: `Transaction ${randomTransaction.id.substring(0, 8)}... has been flagged as potentially fraudulent with ${Math.round(randomTransaction.fraud_score * 100)}% confidence score.`,
       severity: randomTransaction.fraud_score > 0.8 ? 'high' : randomTransaction.fraud_score > 0.6 ? 'medium' : 'low',
-      transaction: randomTransaction
+      transaction: randomTransaction,
+      read: false,
+      reviewed: false
+    });
+    
+    // Show notification toast
+    toast.warning("New fraud alert", {
+      description: "A transaction has been flagged for review",
+      action: {
+        label: "View",
+        onClick: () => document.getElementById("notifications-button")?.click()
+      }
     });
   };
 
@@ -120,7 +151,7 @@ const Index = () => {
           <AnalyticsSection 
             channelData={channelData}
             paymentModeData={paymentModeData}
-            paymentGatewayData={paymentGatewayData}
+            paymentGatewayData={[{ name: "SubPaisa", value: transactions.length }]}
           />
         </div>
         

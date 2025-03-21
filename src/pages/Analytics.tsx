@@ -13,8 +13,8 @@ import {
   ResponsiveContainer,
   Tooltip
 } from 'recharts';
+import { getFormattedTransactions } from '@/data/subpaisaTransactions';
 import { 
-  generateTransactions, 
   calculateFraudMetrics, 
   Transaction 
 } from '@/utils/mockData';
@@ -26,9 +26,21 @@ const Analytics = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const generatedTransactions = generateTransactions(200);
-      setTransactions(generatedTransactions);
-      setMetrics(calculateFraudMetrics(generatedTransactions));
+      // Use the same transactions data source as the dashboard
+      const subpaisaTransactions = getFormattedTransactions();
+      
+      // Make sure all transactions are from SubPaisa payment gateway
+      const updatedTransactions = subpaisaTransactions.map(t => ({
+        ...t,
+        paymentGateway: 'subpaisa' as 'subpaisa'
+      }));
+      
+      setTransactions(updatedTransactions);
+      
+      // Calculate metrics using the same logic as the dashboard
+      const calculatedMetrics = calculateFraudMetrics(updatedTransactions);
+      setMetrics(calculatedMetrics);
+      
       setIsLoading(false);
     }, 1200);
 
@@ -38,9 +50,9 @@ const Analytics = () => {
   // Calculate confusion matrix data
   const confusionMatrix = {
     truePositives: transactions.filter(t => t.is_fraud_predicted && t.is_fraud_reported).length,
-    falsePositives: transactions.filter(t => t.is_fraud_predicted && !t.is_fraud_reported).length,
+    falsePositives: metrics?.falsePositives || 0,
     trueNegatives: transactions.filter(t => !t.is_fraud_predicted && !t.is_fraud_reported).length,
-    falseNegatives: transactions.filter(t => !t.is_fraud_predicted && t.is_fraud_reported).length
+    falseNegatives: metrics?.falseNegatives || 0
   };
 
   // Prepare data for model performance pie chart
@@ -122,7 +134,7 @@ const Analytics = () => {
 
   return (
     <Dashboard 
-      title="Fraud Analytics" 
+      title="SubPaisa Fraud Analytics" 
       subtitle="In-depth analysis of fraud detection performance"
     >
       <motion.div
@@ -169,7 +181,7 @@ const Analytics = () => {
                 <div className="border rounded-md p-4">
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground mb-1">Precision</p>
-                    <p className="text-xl font-bold">{(metrics.precision * 100).toFixed(1)}%</p>
+                    <p className="text-xl font-bold">{metrics ? (metrics.precision * 100).toFixed(1) : '0.0'}%</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       TP / (TP + FP)
                     </p>
@@ -178,7 +190,7 @@ const Analytics = () => {
                 <div className="border rounded-md p-4">
                   <div className="text-center">
                     <p className="text-xs text-muted-foreground mb-1">Recall</p>
-                    <p className="text-xl font-bold">{(metrics.recall * 100).toFixed(1)}%</p>
+                    <p className="text-xl font-bold">{metrics ? (metrics.recall * 100).toFixed(1) : '0.0'}%</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       TP / (TP + FN)
                     </p>

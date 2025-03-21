@@ -45,9 +45,30 @@ const FraudGraph: React.FC<FraudGraphProps> = ({ data, className }) => {
   const [timeframe, setTimeframe] = useState<'7d' | '14d' | '30d'>('7d');
   
   const filteredData = React.useMemo(() => {
+    if (!data || data.length === 0) {
+      return [];
+    }
+    
     const days = timeframe === '7d' ? 7 : timeframe === '14d' ? 14 : 30;
     return data.slice(-days);
   }, [data, timeframe]);
+
+  // Skip rendering if we don't have data
+  if (!data || data.length === 0 || !filteredData.length) {
+    return (
+      <Card className={className}>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-medium">Fraud Trends</h3>
+          <div className="flex items-center space-x-2">
+            {/* Timeframe buttons */}
+          </div>
+        </div>
+        <div className="w-full h-80 flex items-center justify-center">
+          <p className="text-muted-foreground">No fraud trend data available</p>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className={className}>
