@@ -52,7 +52,7 @@ export interface TimeSeriesData {
 
 // Generate a single random transaction
 export function generateTransaction(): Transaction {
-  const amount = parseFloat(faker.finance.amount(10, 5000, 2));
+  const amount = parseFloat(faker.finance.amount({ min: 10, max: 5000 }));
   const isFraudPredicted = Math.random() < 0.15; // 15% chance of fraud prediction
   const isFraudReported = isFraudPredicted && Math.random() < 0.85; // 85% of predicted frauds are actually reported
   
@@ -60,8 +60,8 @@ export function generateTransaction(): Transaction {
   const falseNegative = !isFraudPredicted && Math.random() < 0.05;
   
   const fraudScore = isFraudPredicted 
-    ? faker.number.float({ min: 0.65, max: 0.98, precision: 0.01 }) 
-    : faker.number.float({ min: 0.01, max: 0.4, precision: 0.01 });
+    ? faker.number.float({ min: 0.65, max: 0.98, fractionDigits: 2 }) 
+    : faker.number.float({ min: 0.01, max: 0.4, fractionDigits: 2 });
   
   const fraudReasons = [
     "Unusual transaction amount",

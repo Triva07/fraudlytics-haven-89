@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variant } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
 import Card from '@/components/ui-custom/Card';
 import { 
@@ -132,7 +132,7 @@ const Analytics = () => {
         className="space-y-8"
       >
         {/* Model Performance Metrics */}
-        <motion.div variants={{ ...pageVariants, delay: 0.2 }}>
+        <motion.div variants={pageVariants}>
           <h3 className="text-lg font-medium mb-4">Model Performance</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Confusion Matrix */}
@@ -218,7 +218,7 @@ const Analytics = () => {
         </motion.div>
         
         {/* Fraud Sources and Reasons */}
-        <motion.div variants={{ ...pageVariants, delay: 0.3 }}>
+        <motion.div variants={pageVariants}>
           <h3 className="text-lg font-medium mb-4">Fraud Insights</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Fraud Source Distribution */}
