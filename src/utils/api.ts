@@ -34,8 +34,8 @@ export const detectFraud = async (transaction: Transaction): Promise<FraudDetect
         channel: transaction.channel,
         // Add these fields to match your backend's velocity check logic
         recentTransactions: 0, // This would need to be determined by your frontend
-        country: transaction.payer.country || 'IN', // Default to India if not available
-        ipCountry: transaction.payer.country || 'IN', // You might want to get actual IP country
+        country: 'IN', // Default to India since payer doesn't have a country property
+        ipCountry: 'IN', // Default to India since payer doesn't have a country property
         timestamp: new Date().toISOString()
       }),
     });
