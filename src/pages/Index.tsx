@@ -6,8 +6,8 @@ import MetricsCards from '@/components/dashboard/MetricsCards';
 import TransactionTable from '@/components/dashboard/TransactionTable';
 import FraudGraph from '@/components/dashboard/FraudGraph';
 import AnalyticsSection from '@/components/dashboard/AnalyticsSection';
+import { getFormattedTransactions, getTransactionStats } from '@/data/subpaisaTransactions';
 import { 
-  generateTransactions, 
   calculateFraudMetrics,
   generateFraudByCategory,
   generateTimeSeriesData
@@ -15,17 +15,25 @@ import {
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
-
-  const [transactions, setTransactions] = useState(generateTransactions(100));
-  const [metrics, setMetrics] = useState(calculateFraudMetrics(transactions));
-  const [channelData, setChannelData] = useState(generateFraudByCategory(transactions, 'channel'));
-  const [paymentModeData, setPaymentModeData] = useState(generateFraudByCategory(transactions, 'paymentMode'));
-  const [paymentGatewayData, setPaymentGatewayData] = useState(generateFraudByCategory(transactions, 'paymentGateway'));
-  const [timeSeriesData, setTimeSeriesData] = useState(generateTimeSeriesData(transactions, 30));
+  const [transactions, setTransactions] = useState([]);
+  const [metrics, setMetrics] = useState(null);
+  const [channelData, setChannelData] = useState([]);
+  const [paymentModeData, setPaymentModeData] = useState([]);
+  const [paymentGatewayData, setPaymentGatewayData] = useState([]);
+  const [timeSeriesData, setTimeSeriesData] = useState([]);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     // Simulate loading data
     const timer = setTimeout(() => {
+      const subpaisaTransactions = getFormattedTransactions();
+      setTransactions(subpaisaTransactions);
+      setMetrics(calculateFraudMetrics(subpaisaTransactions));
+      setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
+      setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
+      setPaymentGatewayData(generateFraudByCategory(subpaisaTransactions, 'paymentGateway'));
+      setTimeSeriesData(generateTimeSeriesData(subpaisaTransactions, 30));
+      setStats(getTransactionStats());
       setIsLoading(false);
     }, 1500);
 
@@ -61,15 +69,15 @@ const Index = () => {
 
   return (
     <Dashboard 
-      title="Fraud Detection Dashboard" 
-      subtitle="Monitor and analyze fraud metrics in real-time"
+      title="SubPaisa Fraud Detection" 
+      subtitle="Monitor and analyze transaction data in real-time"
     >
       <motion.div
         initial="initial"
         animate="animate"
         variants={pageVariants}
       >
-        <MetricsCards metrics={metrics} />
+        {metrics && <MetricsCards metrics={metrics} />}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <FraudGraph data={timeSeriesData} />
