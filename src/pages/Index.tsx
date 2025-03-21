@@ -14,6 +14,9 @@ import {
   Transaction
 } from '@/utils/mockData';
 
+// Verify API key is properly initialized
+console.log("Gemini API Key available:", !!import.meta.env.VITE_GEMINI_API_KEY);
+
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [transactions, setTransactions] = useState<Transaction[]>([]);

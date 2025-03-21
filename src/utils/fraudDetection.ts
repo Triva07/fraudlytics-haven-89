@@ -1,11 +1,10 @@
 
 import { toast } from "@/hooks/use-toast";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Gemini API key
-const GEMINI_API_KEY = "AIzaSyA7WL5Pisv7OhJ8XReH1d-erUTFwjoeh48";
-
-// Base URL for the Gemini API
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+// Initialize the Google Generative AI client
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyA7WL5Pisv7OhJ8XReH1d-erUTFwjoeh48");
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Fraud detection thresholds
 export interface FraudDetectionOptions {
@@ -109,44 +108,16 @@ export const detectFraudWithAI = async (transaction: any): Promise<{
     - reasoning: string explaining your analysis
     `;
 
-    // Make request to Gemini API
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.2,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Gemini API returned ${response.status}`);
-    }
-
-    const data = await response.json();
+    // Make request to Gemini using the SDK
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const responseText = response.text();
     
-    // Parse the Gemini response
-    const aiResponseText = data.candidates[0].content.parts[0].text;
     let aiResult;
     
     try {
       // Extract JSON from the response text
-      const jsonMatch = aiResponseText.match(/\{[\s\S]*\}/);
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         aiResult = JSON.parse(jsonMatch[0]);
       } else {
@@ -205,31 +176,13 @@ export const analyzeFraudRisk = (transaction: any) => {
 // Test function for the Gemini API
 export const testGeminiAPI = async (): Promise<boolean> => {
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: "Respond with 'Gemini API is working correctly' if you receive this message."
-              }
-            ]
-          }
-        ]
-      })
-    });
+    // Use the SDK to make a simple test request
+    const result = await model.generateContent("Respond with 'Gemini API is working correctly' if you receive this message.");
+    const response = await result.response;
+    const text = response.text();
     
-    if (!response.ok) {
-      throw new Error(`API returned ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log("Gemini API test response:", data);
-    return true;
+    console.log("Gemini API test response:", text);
+    return text.includes("working correctly");
   } catch (error) {
     console.error("Gemini API test failed:", error);
     return false;
