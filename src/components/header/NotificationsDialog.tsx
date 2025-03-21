@@ -11,6 +11,7 @@ import Badge from '@/components/ui-custom/Badge';
 import { cn } from '@/lib/utils';
 import { useNotificationsStore, FraudNotification } from '@/store/notificationsStore';
 import FraudReviewDialog from '@/components/fraud/FraudReviewDialog';
+import { formatDistanceToNow } from 'date-fns';
 
 interface NotificationsDialogProps {
   open: boolean;
@@ -98,13 +99,24 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
     }
   };
 
+  // Format the timestamp using date-fns
+  const formatTimestamp = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return timestamp;
+    }
+  };
+
   // Combine both types of notifications
   const allNotifications = [
     ...notifications.map(n => ({
       id: n.id,
       title: n.title,
       description: n.description,
-      time: new Date(n.timestamp).toRelative || new Date(n.timestamp).toLocaleString(),
+      time: formatTimestamp(n.timestamp),
       read: n.read,
       type: 'fraud' as NotificationType,
       fraudData: n
