@@ -35,24 +35,17 @@ const Index = () => {
     // Simulate loading data
     const timer = setTimeout(() => {
       const subpaisaTransactions = getFormattedTransactions();
-      
-      // Make sure all transactions are from SubPaisa payment gateway
-      const updatedTransactions = subpaisaTransactions.map(t => ({
-        ...t,
-        paymentGateway: 'subpaisa' as 'subpaisa'
-      }));
-      
-      setTransactions(updatedTransactions);
+      setTransactions(subpaisaTransactions);
       
       // Calculate metrics for consistency between dashboard and analytics
-      const calculatedMetrics = calculateFraudMetrics(updatedTransactions);
+      const calculatedMetrics = calculateFraudMetrics(subpaisaTransactions);
       setMetrics(calculatedMetrics);
       
-      setChannelData(generateFraudByCategory(updatedTransactions, 'channel'));
-      setPaymentModeData(generateFraudByCategory(updatedTransactions, 'paymentMode'));
+      setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
+      setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
       
       // Generate time series data
-      const timeSeries = generateTimeSeriesData(updatedTransactions, 30);
+      const timeSeries = generateTimeSeriesData(subpaisaTransactions, 30);
       setTimeSeriesData(timeSeries);
       
       setStats(getTransactionStats());
@@ -75,15 +68,12 @@ const Index = () => {
     const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
     
     addNotification({
-      id: `fraud-${Date.now()}`,
       transactionId: randomTransaction.id,
       timestamp: new Date().toISOString(),
       title: "New Fraud Alert: Suspicious Transaction",
       description: `Transaction ${randomTransaction.id.substring(0, 8)}... has been flagged as potentially fraudulent with ${Math.round(randomTransaction.fraud_score * 100)}% confidence score.`,
       severity: randomTransaction.fraud_score > 0.8 ? 'high' : randomTransaction.fraud_score > 0.6 ? 'medium' : 'low',
       transaction: randomTransaction,
-      read: false,
-      reviewed: false
     });
     
     // Show notification toast
@@ -151,7 +141,7 @@ const Index = () => {
           <AnalyticsSection 
             channelData={channelData}
             paymentModeData={paymentModeData}
-            paymentGatewayData={[{ name: "SubPaisa", value: transactions.length }]}
+            paymentGatewayData={[{ category: "SubPaisa", predictedCount: transactions.length, reportedCount: transactions.filter(t => t.is_fraud_reported).length }]}
           />
         </div>
         

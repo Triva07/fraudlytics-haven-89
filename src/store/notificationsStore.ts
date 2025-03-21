@@ -20,7 +20,14 @@ export interface FraudNotification {
 interface NotificationsState {
   notifications: FraudNotification[];
   unreadCount: number;
-  addNotification: (notification: Omit<FraudNotification, 'id' | 'read' | 'reviewed'>) => void;
+  addNotification: (notification: {
+    transactionId: string;
+    timestamp: string;
+    title: string;
+    description: string;
+    severity: 'high' | 'medium' | 'low';
+    transaction: Transaction;
+  }) => void;
   markAsRead: (id: string) => void;
   markAsReviewed: (id: string, reviewedBy: string, reviewNotes?: string) => void;
   getUnreadCount: () => number;

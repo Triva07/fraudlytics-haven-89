@@ -19,7 +19,7 @@ export interface Transaction {
   };
   channel: 'mobile' | 'web' | 'atm' | 'in-store' | 'api';
   paymentMode: 'credit_card' | 'debit_card' | 'bank_transfer' | 'upi' | 'wallet';
-  paymentGateway: 'stripe' | 'paypal' | 'braintree' | 'razorpay' | 'internal';
+  paymentGateway: 'stripe' | 'paypal' | 'braintree' | 'razorpay' | 'internal' | 'subpaisa';
   is_fraud_predicted: boolean;
   is_fraud_reported: boolean;
   fraud_score: number;

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, Variant } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
@@ -28,17 +27,10 @@ const Analytics = () => {
     const timer = setTimeout(() => {
       // Use the same transactions data source as the dashboard
       const subpaisaTransactions = getFormattedTransactions();
-      
-      // Make sure all transactions are from SubPaisa payment gateway
-      const updatedTransactions = subpaisaTransactions.map(t => ({
-        ...t,
-        paymentGateway: 'subpaisa' as 'subpaisa'
-      }));
-      
-      setTransactions(updatedTransactions);
+      setTransactions(subpaisaTransactions);
       
       // Calculate metrics using the same logic as the dashboard
-      const calculatedMetrics = calculateFraudMetrics(updatedTransactions);
+      const calculatedMetrics = calculateFraudMetrics(subpaisaTransactions);
       setMetrics(calculatedMetrics);
       
       setIsLoading(false);
