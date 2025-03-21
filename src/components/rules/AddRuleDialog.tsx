@@ -160,11 +160,11 @@ const AddRuleDialog: React.FC<AddRuleDialogProps> = ({
                   <p className="text-xs text-amber-700 mt-1">
                     Write conditions using JavaScript-like syntax. Examples:
                     <br />
-                    • <code>amount > 5000</code> - Flag transactions over $5000
+                    • <code>amount {'>'} 5000</code> - Flag transactions over $5000
                     <br />
                     • <code>country in ["RU", "NG", "UA"]</code> - Flag high-risk countries
                     <br />
-                    • <code>hour < 8 || hour > 20</code> - Flag outside business hours
+                    • <code>hour {'<'} 8 || hour {'>'} 20</code> - Flag outside business hours
                   </p>
                 </div>
               </div>
