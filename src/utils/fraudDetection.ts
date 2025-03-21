@@ -1,7 +1,9 @@
 
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useNotificationsStore } from "@/store/notificationsStore";
+import { detectFraud as apiDetectFraud } from "./api";
+import { Transaction } from "./mockData";
 
 // Initialize the Google Generative AI client
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyA7WL5Pisv7OhJ8XReH1d-erUTFwjoeh48");
@@ -174,22 +176,87 @@ export const detectFraudWithAI = async (transaction: any): Promise<{
 };
 
 // Analysis helper function to evaluate transaction
-export const analyzeFraudRisk = (transaction: any) => {
-  const result = detectFraud(transaction);
-  
-  if (result.isFraudulent) {
-    const { addNotification } = useNotificationsStore.getState();
-    addNotification({
-      transactionId: transaction.id,
-      timestamp: new Date().toISOString(),
-      title: "Fraud Alert: Suspicious Transaction",
-      description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reasons: ${result.reasons.join(", ")}`,
-      severity: result.score > 0.8 ? 'high' : result.score > 0.6 ? 'medium' : 'low',
-      transaction: transaction,
-    });
+export const analyzeFraudRisk = async (transaction: Transaction): Promise<{
+  isFraudulent: boolean;
+  isSuspicious: boolean;
+  reasons: string[];
+  score: number;
+  status: string;
+  popupMessage?: string;
+  needsConfirmation: boolean;
+}> => {
+  try {
+    // First try to use the backend API
+    const apiResult = await apiDetectFraud(transaction);
+    
+    // Process the API response
+    const needsConfirmation = apiResult.status === "Suspicious";
+    const isFraudulent = apiResult.is_fraud_predicted || apiResult.status === "Fraud";
+    
+    if (isFraudulent || needsConfirmation) {
+      const { addNotification } = useNotificationsStore.getState();
+      
+      // Only add notification for fraud cases, not for suspicious ones that need confirmation
+      if (isFraudulent) {
+        addNotification({
+          transactionId: transaction.id,
+          timestamp: new Date().toISOString(),
+          title: "Fraud Alert: Suspicious Transaction",
+          description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reason: ${apiResult.fraud_reason}`,
+          severity: apiResult.fraud_score > 0.8 ? 'high' : apiResult.fraud_score > 0.6 ? 'medium' : 'low',
+          transaction: {
+            ...transaction,
+            is_fraud_predicted: true,
+            fraud_score: apiResult.fraud_score
+          },
+        });
+      }
+    }
+    
+    return {
+      isFraudulent: isFraudulent,
+      isSuspicious: needsConfirmation,
+      reasons: [apiResult.fraud_reason],
+      score: apiResult.fraud_score,
+      status: apiResult.status,
+      popupMessage: apiResult.popup_message,
+      needsConfirmation: needsConfirmation
+    };
+  } catch (error) {
+    console.error('Error in API fraud detection, falling back to local:', error);
+    
+    // Fallback to local detection if API fails
+    const result = detectFraud(transaction);
+    
+    // Check if transaction might be suspicious based on amount (mimicking backend rules)
+    const isSuspicious = transaction.amount > 100000;
+    
+    if (result.isFraudulent || isSuspicious) {
+      const { addNotification } = useNotificationsStore.getState();
+      
+      // Only add notification for fraud cases, not for suspicious ones
+      if (result.isFraudulent && !isSuspicious) {
+        addNotification({
+          transactionId: transaction.id,
+          timestamp: new Date().toISOString(),
+          title: "Fraud Alert: Suspicious Transaction",
+          description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reasons: ${result.reasons.join(", ")}`,
+          severity: result.score > 0.8 ? 'high' : result.score > 0.6 ? 'medium' : 'low',
+          transaction: transaction,
+        });
+      }
+    }
+    
+    return {
+      isFraudulent: result.isFraudulent,
+      isSuspicious: isSuspicious,
+      reasons: result.reasons,
+      score: result.score,
+      status: isSuspicious ? "Suspicious" : (result.isFraudulent ? "Fraud" : "Complete"),
+      popupMessage: isSuspicious ? "Call the user to confirm if this transaction was made by them." : undefined,
+      needsConfirmation: isSuspicious
+    };
   }
-  
-  return result;
 };
 
 // Test function for the Gemini API

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
@@ -17,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { useNotificationsStore } from '@/store/notificationsStore';
 import { ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
+import { analyzeFraudRisk } from '@/utils/fraudDetection';
+import SuspiciousTransactionDialog from '@/components/fraud/SuspiciousTransactionDialog';
 
 // Verify API key is properly initialized
 console.log("Gemini API Key available:", !!import.meta.env.VITE_GEMINI_API_KEY);
@@ -30,8 +31,14 @@ const Index = () => {
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [stats, setStats] = useState(null);
   const addNotification = useNotificationsStore(state => state.addNotification);
-  // Store this in a ref to prevent re-renders
   const [unreviewedNotifications, setUnreviewedNotifications] = useState([]);
+  const [showSuspiciousDialog, setShowSuspiciousDialog] = useState(false);
+  const [suspiciousTransaction, setSuspiciousTransaction] = useState<Transaction | null>(null);
+  const [fraudDetails, setFraudDetails] = useState<{
+    fraudReason: string;
+    fraudScore: number;
+    popupMessage?: string;
+  } | null>(null);
   
   // Get unreviewed notifications once on component mount
   useEffect(() => {
@@ -81,7 +88,7 @@ const Index = () => {
     };
   }, []);
 
-  const addDemoAlert = () => {
+  const addDemoAlert = async () => {
     const fraudulentTransactions = transactions.filter(t => {
       const alreadyNotified = unreviewedNotifications.some(
         n => n.transactionId === t.id
@@ -90,14 +97,52 @@ const Index = () => {
     });
     
     if (fraudulentTransactions.length === 0) {
-      toast.info("No new fraudulent transactions to alert", {
-        description: "All detected fraudulent transactions have been notified"
+      // If no fraudulent transactions, create a high-value transaction
+      // that will be flagged as suspicious by our rules (amount > 100,000)
+      const highValueTransaction = {
+        ...transactions[0],
+        id: `tx-${Date.now()}`,
+        amount: 150000, // ₹1,50,000 (high value that should trigger suspicious)
+        timestamp: new Date().toISOString()
+      };
+      
+      // Analyze the transaction using our backend-compatible detection
+      const result = await analyzeFraudRisk(highValueTransaction);
+      
+      if (result.needsConfirmation) {
+        setSuspiciousTransaction(highValueTransaction);
+        setFraudDetails({
+          fraudReason: result.reasons[0] || "Suspicious transaction",
+          fraudScore: result.score,
+          popupMessage: result.popupMessage
+        });
+        setShowSuspiciousDialog(true);
+        return;
+      }
+      
+      toast.info("No suspicious transactions to simulate", {
+        description: "All existing transactions passed fraud checks"
       });
       return;
     }
     
     const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
     
+    // First check if it's a high amount transaction
+    const result = await analyzeFraudRisk(randomTransaction);
+    
+    if (result.needsConfirmation) {
+      setSuspiciousTransaction(randomTransaction);
+      setFraudDetails({
+        fraudReason: result.reasons[0] || "Suspicious transaction",
+        fraudScore: result.score, 
+        popupMessage: result.popupMessage
+      });
+      setShowSuspiciousDialog(true);
+      return;
+    }
+    
+    // Otherwise, proceed with regular notification
     addNotification({
       transactionId: randomTransaction.id,
       timestamp: new Date().toISOString(),
@@ -117,6 +162,15 @@ const Index = () => {
         onClick: () => document.getElementById("notifications-button")?.click()
       }
     });
+  };
+
+  const handleSuspiciousTransactionAction = () => {
+    // Update notifications after handling the suspicious transaction
+    setUnreviewedNotifications(useNotificationsStore.getState().getUnreviewedNotifications());
+    
+    // Clear suspicious transaction state
+    setSuspiciousTransaction(null);
+    setFraudDetails(null);
   };
 
   const pageVariants = {
@@ -185,6 +239,15 @@ const Index = () => {
           <h3 className="text-lg font-medium mb-4">Recent Transactions</h3>
           <TransactionTable transactions={transactions.slice(0, 10)} />
         </div>
+        
+        {/* Suspicious Transaction Dialog */}
+        <SuspiciousTransactionDialog
+          open={showSuspiciousDialog}
+          onOpenChange={setShowSuspiciousDialog}
+          transaction={suspiciousTransaction}
+          fraudDetails={fraudDetails}
+          onConfirm={handleSuspiciousTransactionAction}
+        />
       </motion.div>
     </Dashboard>
   );
