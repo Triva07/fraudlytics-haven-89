@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useNotificationsStore } from "@/store/notificationsStore";
@@ -160,11 +159,7 @@ export const detectFraudWithAI = async (transaction: any): Promise<{
     };
   } catch (error) {
     console.error("Error in AI fraud detection:", error);
-    toast({
-      title: "AI Detection Failed",
-      description: "Falling back to rule-based detection.",
-      variant: "destructive",
-    });
+    toast.error("AI Detection Failed: Falling back to rule-based detection.");
     
     // Fallback to rule-based detection
     const fallbackResult = detectFraud(transaction);

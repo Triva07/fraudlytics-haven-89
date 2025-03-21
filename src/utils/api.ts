@@ -27,7 +27,7 @@ export const detectFraud = async (transaction: Transaction): Promise<FraudDetect
       },
       body: JSON.stringify({
         transaction_id: transaction.id,
-        payer_id: transaction.payerId,
+        payer_id: transaction.payer.id, // Fixed: use payer.id instead of payerId
         amount: transaction.amount,
         // Include any other relevant transaction data
         payment_method: transaction.paymentMode,
@@ -49,7 +49,7 @@ export const detectFraud = async (transaction: Transaction): Promise<FraudDetect
     // Return a fallback object if the API call fails
     return {
       transaction_id: transaction.id,
-      payer_id: transaction.payerId,
+      payer_id: transaction.payer.id, // Fixed: use payer.id instead of payerId
       amount: transaction.amount,
       is_fraud_predicted: false,
       fraud_source: 'local',
