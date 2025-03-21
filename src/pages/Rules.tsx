@@ -5,9 +5,23 @@ import Dashboard from '@/components/layout/Dashboard';
 import Card from '@/components/ui-custom/Card';
 import Badge from '@/components/ui-custom/Badge';
 import { Check, Plus, Trash2, AlertTriangle, DollarSign, Globe, Clock, Zap } from 'lucide-react';
+import AddRuleDialog from '@/components/rules/AddRuleDialog';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+
+interface Rule {
+  id: number;
+  name: string;
+  description: string;
+  condition: string;
+  enabled: boolean;
+  icon: React.ReactNode;
+}
 
 const Rules = () => {
-  const [rules, setRules] = useState([
+  const { toast } = useToast();
+  const [addRuleOpen, setAddRuleOpen] = useState(false);
+  const [rules, setRules] = useState<Rule[]>([
     {
       id: 1,
       name: 'High Amount Transaction',
@@ -43,13 +57,59 @@ const Rules = () => {
   ]);
 
   const toggleRule = (id: number) => {
-    setRules(rules.map(rule => 
-      rule.id === id ? { ...rule, enabled: !rule.enabled } : rule
-    ));
+    setRules(rules.map(rule => {
+      if (rule.id === id) {
+        const newState = !rule.enabled;
+        toast({
+          title: `Rule ${newState ? 'enabled' : 'disabled'}`,
+          description: `"${rule.name}" has been ${newState ? 'enabled' : 'disabled'}`,
+          variant: newState ? 'success' : 'default',
+        });
+        return { ...rule, enabled: newState };
+      }
+      return rule;
+    }));
   };
 
   const deleteRule = (id: number) => {
-    setRules(rules.filter(rule => rule.id !== id));
+    const ruleToDelete = rules.find(rule => rule.id === id);
+    if (ruleToDelete) {
+      toast({
+        title: "Rule deleted",
+        description: `"${ruleToDelete.name}" has been removed`,
+        variant: "destructive",
+      });
+      setRules(rules.filter(rule => rule.id !== id));
+    }
+  };
+
+  const addRule = (newRule: { name: string, description: string, condition: string }) => {
+    // Determine which icon to use based on the rule description or condition
+    let icon = <AlertTriangle className="w-5 h-5" />;
+    
+    if (newRule.condition.includes('amount') || newRule.condition.includes('$')) {
+      icon = <DollarSign className="w-5 h-5" />;
+    } else if (newRule.condition.includes('country') || newRule.condition.includes('location')) {
+      icon = <Globe className="w-5 h-5" />;
+    } else if (newRule.condition.includes('hour') || newRule.condition.includes('time')) {
+      icon = <Clock className="w-5 h-5" />;
+    } else if (newRule.condition.includes('count') || newRule.condition.includes('tx_count')) {
+      icon = <Zap className="w-5 h-5" />;
+    }
+
+    const newId = Math.max(0, ...rules.map(r => r.id)) + 1;
+    
+    setRules([
+      ...rules,
+      {
+        id: newId,
+        name: newRule.name,
+        description: newRule.description,
+        condition: newRule.condition,
+        enabled: true,
+        icon: icon
+      }
+    ]);
   };
 
   const pageVariants = {
@@ -85,14 +145,14 @@ const Rules = () => {
       >
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium">Active Rules</h3>
-          <motion.button 
-            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-md"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <Button 
+            size="sm"
+            className="gap-2"
+            onClick={() => setAddRuleOpen(true)}
           >
             <Plus className="w-4 h-4" />
             Add New Rule
-          </motion.button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -134,7 +194,7 @@ const Rules = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 w-4" />
                   </motion.button>
                 </div>
               </Card>
@@ -147,6 +207,7 @@ const Rules = () => {
                 className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setAddRuleOpen(true)}
               >
                 <div className="w-12 h-12 rounded-full border-2 border-dashed border-muted-foreground flex items-center justify-center mb-2">
                   <Plus className="w-6 h-6" />
@@ -174,6 +235,13 @@ const Rules = () => {
           </Card>
         </motion.div>
       </motion.div>
+
+      {/* Add Rule Dialog */}
+      <AddRuleDialog 
+        open={addRuleOpen}
+        onOpenChange={setAddRuleOpen}
+        onAddRule={addRule}
+      />
     </Dashboard>
   );
 };

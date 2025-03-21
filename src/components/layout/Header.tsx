@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -15,6 +14,9 @@ import {
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import Badge from '@/components/ui-custom/Badge';
+import SearchDialog from '@/components/header/SearchDialog';
+import NotificationsDialog from '@/components/header/NotificationsDialog';
+import SettingsDialog from '@/components/header/SettingsDialog';
 
 interface NavItem {
   name: string;
@@ -26,6 +28,9 @@ const Header: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const navItems: NavItem[] = [
     {
@@ -159,6 +164,7 @@ const Header: React.FC = () => {
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setIsSearchOpen(true)}
             >
               <Search className="w-5 h-5" />
             </motion.button>
@@ -168,7 +174,10 @@ const Header: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <button className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition">
+              <button 
+                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition"
+                onClick={() => setIsNotificationsOpen(true)}
+              >
                 <Bell className="w-5 h-5" />
               </button>
               <Badge 
@@ -185,6 +194,7 @@ const Header: React.FC = () => {
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setIsSettingsOpen(true)}
             >
               <Settings className="w-5 h-5" />
             </motion.button>
@@ -254,6 +264,22 @@ const Header: React.FC = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Dialogs */}
+      <SearchDialog 
+        open={isSearchOpen} 
+        onOpenChange={setIsSearchOpen} 
+      />
+      
+      <NotificationsDialog 
+        open={isNotificationsOpen} 
+        onOpenChange={setIsNotificationsOpen} 
+      />
+      
+      <SettingsDialog 
+        open={isSettingsOpen} 
+        onOpenChange={setIsSettingsOpen} 
+      />
     </motion.header>
   );
 };
