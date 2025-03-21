@@ -30,7 +30,14 @@ const Index = () => {
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [stats, setStats] = useState(null);
   const addNotification = useNotificationsStore(state => state.addNotification);
-  const unreviewedNotifications = useNotificationsStore(state => state.getUnreviewedNotifications());
+  // Store this in a ref to prevent re-renders
+  const [unreviewedNotifications, setUnreviewedNotifications] = useState([]);
+  
+  // Get unreviewed notifications once on component mount
+  useEffect(() => {
+    const unreviewedNotifs = useNotificationsStore.getState().getUnreviewedNotifications();
+    setUnreviewedNotifications(unreviewedNotifs);
+  }, []);
 
   useEffect(() => {
     // Add console logs to track loading process
@@ -99,6 +106,9 @@ const Index = () => {
       severity: randomTransaction.fraud_score > 0.8 ? 'high' : randomTransaction.fraud_score > 0.6 ? 'medium' : 'low',
       transaction: randomTransaction,
     });
+    
+    // Update our local state of unreviewed notifications
+    setUnreviewedNotifications(useNotificationsStore.getState().getUnreviewedNotifications());
     
     toast.warning("New fraud alert", {
       description: "A transaction has been flagged for review",
