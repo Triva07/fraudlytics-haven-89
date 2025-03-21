@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
@@ -32,28 +33,45 @@ const Index = () => {
   const unreviewedNotifications = useNotificationsStore(state => state.getUnreviewedNotifications());
 
   useEffect(() => {
+    // Add console logs to track loading process
+    console.log("Index component mounting");
     const timer = setTimeout(() => {
-      const subpaisaTransactions = getFormattedTransactions();
-      setTransactions(subpaisaTransactions);
-      
-      const calculatedMetrics = calculateFraudMetrics(subpaisaTransactions);
-      setMetrics(calculatedMetrics);
-      
-      setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
-      setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
-      
-      const timeSeries = generateTimeSeriesData(subpaisaTransactions, 30);
-      setTimeSeriesData(timeSeries);
-      
-      setStats(getTransactionStats());
-      setIsLoading(false);
-      
-      toast.success("Dashboard data loaded successfully", {
-        description: "Showing SubPaisa transaction analytics"
-      });
+      try {
+        console.log("Loading data in Index");
+        const subpaisaTransactions = getFormattedTransactions();
+        console.log("Transactions loaded:", subpaisaTransactions.length);
+        setTransactions(subpaisaTransactions);
+        
+        const calculatedMetrics = calculateFraudMetrics(subpaisaTransactions);
+        console.log("Metrics calculated:", calculatedMetrics);
+        setMetrics(calculatedMetrics);
+        
+        setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
+        setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
+        
+        const timeSeries = generateTimeSeriesData(subpaisaTransactions, 30);
+        console.log("Time series data:", timeSeries.length);
+        setTimeSeriesData(timeSeries);
+        
+        setStats(getTransactionStats());
+        setIsLoading(false);
+        
+        toast.success("Dashboard data loaded successfully", {
+          description: "Showing SubPaisa transaction analytics"
+        });
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        toast.error("Failed to load dashboard data", {
+          description: "Please refresh the page and try again"
+        });
+        setIsLoading(false);
+      }
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log("Index component unmounting");
+      clearTimeout(timer);
+    };
   }, []);
 
   const addDemoAlert = () => {
@@ -117,6 +135,9 @@ const Index = () => {
       </div>
     );
   }
+
+  // Add console.log to verify we're reaching the render part when data is loaded
+  console.log("Rendering Index dashboard with data");
 
   return (
     <Dashboard 
