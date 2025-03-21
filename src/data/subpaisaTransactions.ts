@@ -408,75 +408,15 @@ export const rawTransactionData: SubpaisaTransaction[] = [
     payer_mobile_anonymous: "XXXXX909.0",
     transaction_id_anonymous: "ANON_F3",
     payee_id_anonymous: "ANON_F3"
-  }
-];
-
-// Function to convert the raw data to the format expected by the Transaction component
-export const getFormattedTransactions = (): Transaction[] => {
-  return rawTransactionData.map((transaction, index) => {
-    // Ensure status is one of the allowed values
-    const status: "completed" | "pending" | "failed" | "flagged" = 
-      transaction.is_fraud ? 'flagged' : 'completed';
-    
-    // Map channel to allowed values
-    const channel: 'mobile' | 'web' | 'atm' | 'in-store' | 'api' = 
-      transaction.transaction_channel.toLowerCase() === 'mobile' 
-        ? 'mobile' 
-        : 'web';
-    
-    // Create a valid paymentMode
-    const paymentMode: 'credit_card' | 'debit_card' | 'bank_transfer' | 'upi' | 'wallet' = 
-      transaction.transaction_payment_mode_anonymous === 10 ? 'credit_card' :
-      transaction.transaction_payment_mode_anonymous === 11 ? 'debit_card' :
-      transaction.transaction_payment_mode_anonymous === 0 ? 'bank_transfer' :
-      transaction.transaction_payment_mode_anonymous === 2 ? 'upi' : 'wallet';
-    
-    // Create a valid paymentGateway
-    const paymentGateway: 'stripe' | 'paypal' | 'braintree' | 'razorpay' | 'internal' = 
-      transaction.payment_gateway_bank_anonymous === 6 ? 'razorpay' :
-      transaction.payment_gateway_bank_anonymous === 0 ? 'stripe' :
-      transaction.payment_gateway_bank_anonymous === 5 ? 'paypal' :
-      transaction.payment_gateway_bank_anonymous === 14 ? 'braintree' : 'internal';
-    
-    return {
-      id: transaction.transaction_id_anonymous,
-      amount: transaction.transaction_amount,
-      currency: "INR",
-      timestamp: new Date(transaction.transaction_date).toISOString(),
-      status: status,
-      payer: {
-        id: `payer-${index}`,
-        name: `Payer ${index} (${transaction.payer_email_anonymous.substring(0, 8)}...)`,
-        bank: `Bank ${transaction.payment_gateway_bank_anonymous}`
-      },
-      payee: {
-        id: transaction.payee_id_anonymous,
-        name: `Payee ${transaction.payee_id_anonymous}`,
-        bank: `Bank ${transaction.payment_gateway_bank_anonymous}`
-      },
-      channel: channel,
-      paymentMode: paymentMode,
-      paymentGateway: paymentGateway,
-      is_fraud_predicted: Boolean(transaction.is_fraud),
-      is_fraud_reported: Boolean(transaction.is_fraud),
-      fraud_score: transaction.is_fraud ? 0.85 : 0.15,
-      fraud_reason: transaction.is_fraud ? "Unusual transaction pattern" : null,
-      fraud_source: transaction.is_fraud ? "model" : null
-    };
-  });
-};
-
-// Get transaction stats
-export const getTransactionStats = () => {
-  const totalTransactions = rawTransactionData.length;
-  const fraudulentTransactions = rawTransactionData.filter(t => t.is_fraud === 1).length;
+  },
   
-  return {
-    totalTransactions,
-    fraudulentTransactions,
-    fraudPercentage: (fraudulentTransactions / totalTransactions) * 100,
-    totalAmount: rawTransactionData.reduce((sum, t) => sum + t.transaction_amount, 0),
-    webTransactions: rawTransactionData.filter(t => t.transaction_channel.toLowerCase() === 'w').length,
-    mobileTransactions: rawTransactionData.filter(t => t.transaction_channel.toLowerCase() === 'mobile').length
-  };
-};
+  // Adding new transaction data from November 6th, 2024
+  {
+    transaction_amount: 12924.79,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "w",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 2,
+    payment_gateway_bank_anonymous: 25,
+    payer_browser_anonymous: 1605,
+    payer_email_anonymous: "5c15
