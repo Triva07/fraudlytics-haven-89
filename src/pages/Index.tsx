@@ -13,6 +13,9 @@ import {
   generateTimeSeriesData,
   Transaction
 } from '@/utils/mockData';
+import { Button } from '@/components/ui/button';
+import { useNotificationsStore } from '@/store/notificationsStore';
+import { ShieldAlert } from 'lucide-react';
 
 // Verify API key is properly initialized
 console.log("Gemini API Key available:", !!import.meta.env.VITE_GEMINI_API_KEY);
@@ -26,6 +29,7 @@ const Index = () => {
   const [paymentGatewayData, setPaymentGatewayData] = useState([]);
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [stats, setStats] = useState(null);
+  const addNotification = useNotificationsStore(state => state.addNotification);
 
   useEffect(() => {
     // Simulate loading data
@@ -43,6 +47,23 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const addDemoAlert = () => {
+    // Get a random transaction that's marked as fraudulent
+    const fraudulentTransactions = transactions.filter(t => t.is_fraud_predicted);
+    if (fraudulentTransactions.length === 0) return;
+    
+    const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
+    
+    addNotification({
+      transactionId: randomTransaction.id,
+      timestamp: new Date().toISOString(),
+      title: "New Fraud Alert: Suspicious Transaction",
+      description: `Transaction ${randomTransaction.id.substring(0, 8)}... has been flagged as potentially fraudulent with ${Math.round(randomTransaction.fraud_score * 100)}% confidence score.`,
+      severity: randomTransaction.fraud_score > 0.8 ? 'high' : randomTransaction.fraud_score > 0.6 ? 'medium' : 'low',
+      transaction: randomTransaction
+    });
+  };
 
   const pageVariants = {
     initial: { opacity: 0 },
@@ -81,6 +102,17 @@ const Index = () => {
         animate="animate"
         variants={pageVariants}
       >
+        <div className="flex justify-end mb-4">
+          <Button 
+            variant="outline" 
+            onClick={addDemoAlert}
+            className="flex items-center space-x-2"
+          >
+            <ShieldAlert className="w-4 h-4 text-fraud-dark" />
+            <span>Demo Fraud Alert</span>
+          </Button>
+        </div>
+        
         {metrics && <MetricsCards metrics={metrics} />}
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

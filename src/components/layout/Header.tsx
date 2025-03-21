@@ -19,6 +19,7 @@ import NotificationsDialog from '@/components/header/NotificationsDialog';
 import SettingsDialog from '@/components/header/SettingsDialog';
 import { testGeminiAPI } from '@/utils/fraudDetection';
 import { useToast } from '@/hooks/use-toast';
+import { useNotificationsStore } from '@/store/notificationsStore';
 
 interface NavItem {
   name: string;
@@ -30,6 +31,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const unreadCount = useNotificationsStore(state => state.unreadCount);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -144,13 +146,11 @@ const Header: React.FC = () => {
     >
       <div className="container mx-auto py-3 px-4 md:px-6">
         <div className="flex items-center justify-between">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <Shield className="w-8 h-8 mr-2 text-primary" />
             <span className="text-xl font-medium tracking-tight">SubPaisa</span>
           </Link>
 
-          {/* Desktop Navigation */}
           {!isMobile && (
             <nav className="hidden md:flex items-center space-x-1">
               {navItems.map((item, index) => (
@@ -178,7 +178,6 @@ const Header: React.FC = () => {
             </nav>
           )}
 
-          {/* Header Actions */}
           <div className="flex items-center space-x-2">
             <motion.button 
               className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition"
@@ -200,14 +199,16 @@ const Header: React.FC = () => {
               >
                 <Bell className="w-5 h-5" />
               </button>
-              <Badge 
-                variant="danger" 
-                size="sm" 
-                className="absolute -top-1 -right-1" 
-                pulsate
-              >
-                2
-              </Badge>
+              {unreadCount > 0 && (
+                <Badge 
+                  variant="danger" 
+                  size="sm" 
+                  className="absolute -top-1 -right-1" 
+                  pulsate
+                >
+                  {unreadCount}
+                </Badge>
+              )}
             </motion.div>
             
             <motion.button 
@@ -219,7 +220,6 @@ const Header: React.FC = () => {
               <Settings className="w-5 h-5" />
             </motion.button>
 
-            {/* Mobile Menu Toggle */}
             {isMobile && (
               <motion.button
                 className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary smooth-transition md:hidden"
@@ -238,7 +238,6 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMobile && (
         <motion.div
           className={cn(
@@ -285,7 +284,6 @@ const Header: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Dialogs */}
       <SearchDialog 
         open={isSearchOpen} 
         onOpenChange={setIsSearchOpen} 

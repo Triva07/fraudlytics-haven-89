@@ -1,6 +1,7 @@
 
 import { toast } from "@/hooks/use-toast";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useNotificationsStore } from "@/store/notificationsStore";
 
 // Initialize the Google Generative AI client
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyA7WL5Pisv7OhJ8XReH1d-erUTFwjoeh48");
@@ -92,7 +93,7 @@ export const detectFraudWithAI = async (transaction: any): Promise<{
     const transactionData = JSON.stringify(transaction, null, 2);
     
     // Construct the prompt for Gemini
-    const prompt = `Analyze this transaction for potential fraud:
+    const prompt = `Analyze this SubPaisa transaction for potential fraud:
     ${transactionData}
     
     Consider these risk factors:
@@ -134,9 +135,23 @@ export const detectFraudWithAI = async (transaction: any): Promise<{
     
     // Combine AI and rule-based results
     const combinedScore = (ruleBasedResult.score + (aiResult.confidenceScore || 0)) / 2;
+    const isFraudulent = combinedScore > 0.5 || aiResult.isFraudulent;
+    
+    // Create a notification if fraud is detected
+    if (isFraudulent) {
+      const { addNotification } = useNotificationsStore.getState();
+      addNotification({
+        transactionId: transaction.id,
+        timestamp: new Date().toISOString(),
+        title: "Fraud Alert: Suspicious Transaction Detected",
+        description: `Transaction ${transaction.id.substring(0, 8)}... flagged with ${Math.round(combinedScore * 100)}% confidence. ${ruleBasedResult.reasons[0] || ""}`,
+        severity: combinedScore > 0.8 ? 'high' : combinedScore > 0.6 ? 'medium' : 'low',
+        transaction: transaction,
+      });
+    }
     
     return {
-      isFraudulent: combinedScore > 0.5 || aiResult.isFraudulent,
+      isFraudulent,
       reasons: [...ruleBasedResult.reasons],
       score: parseFloat(combinedScore.toFixed(2)),
       aiAnalysis: aiResult.reasoning || "No detailed analysis provided.",
@@ -163,10 +178,14 @@ export const analyzeFraudRisk = (transaction: any) => {
   const result = detectFraud(transaction);
   
   if (result.isFraudulent) {
-    toast({
-      title: "Fraud Alert",
-      description: `Suspicious transaction detected: ${result.reasons.join(", ")}`,
-      variant: "destructive",
+    const { addNotification } = useNotificationsStore.getState();
+    addNotification({
+      transactionId: transaction.id,
+      timestamp: new Date().toISOString(),
+      title: "Fraud Alert: Suspicious Transaction",
+      description: `Transaction ${transaction.id.substring(0, 8)}... flagged. Reasons: ${result.reasons.join(", ")}`,
+      severity: result.score > 0.8 ? 'high' : result.score > 0.6 ? 'medium' : 'low',
+      transaction: transaction,
     });
   }
   
