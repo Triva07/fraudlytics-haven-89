@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Dashboard from '@/components/layout/Dashboard';
@@ -30,28 +29,25 @@ const Index = () => {
   const [timeSeriesData, setTimeSeriesData] = useState([]);
   const [stats, setStats] = useState(null);
   const addNotification = useNotificationsStore(state => state.addNotification);
+  const unreviewedNotifications = useNotificationsStore(state => state.getUnreviewedNotifications());
 
   useEffect(() => {
-    // Simulate loading data
     const timer = setTimeout(() => {
       const subpaisaTransactions = getFormattedTransactions();
       setTransactions(subpaisaTransactions);
       
-      // Calculate metrics for consistency between dashboard and analytics
       const calculatedMetrics = calculateFraudMetrics(subpaisaTransactions);
       setMetrics(calculatedMetrics);
       
       setChannelData(generateFraudByCategory(subpaisaTransactions, 'channel'));
       setPaymentModeData(generateFraudByCategory(subpaisaTransactions, 'paymentMode'));
       
-      // Generate time series data
       const timeSeries = generateTimeSeriesData(subpaisaTransactions, 30);
       setTimeSeriesData(timeSeries);
       
       setStats(getTransactionStats());
       setIsLoading(false);
       
-      // Show success toast
       toast.success("Dashboard data loaded successfully", {
         description: "Showing SubPaisa transaction analytics"
       });
@@ -61,9 +57,19 @@ const Index = () => {
   }, []);
 
   const addDemoAlert = () => {
-    // Get a random transaction that's marked as fraudulent
-    const fraudulentTransactions = transactions.filter(t => t.is_fraud_predicted);
-    if (fraudulentTransactions.length === 0) return;
+    const fraudulentTransactions = transactions.filter(t => {
+      const alreadyNotified = unreviewedNotifications.some(
+        n => n.transactionId === t.id
+      );
+      return t.is_fraud_predicted && !alreadyNotified;
+    });
+    
+    if (fraudulentTransactions.length === 0) {
+      toast.info("No new fraudulent transactions to alert", {
+        description: "All detected fraudulent transactions have been notified"
+      });
+      return;
+    }
     
     const randomTransaction = fraudulentTransactions[Math.floor(Math.random() * fraudulentTransactions.length)];
     
@@ -76,7 +82,6 @@ const Index = () => {
       transaction: randomTransaction,
     });
     
-    // Show notification toast
     toast.warning("New fraud alert", {
       description: "A transaction has been flagged for review",
       action: {

@@ -31,6 +31,7 @@ interface NotificationsState {
   markAsRead: (id: string) => void;
   markAsReviewed: (id: string, reviewedBy: string, reviewNotes?: string) => void;
   getUnreadCount: () => number;
+  getUnreviewedNotifications: () => FraudNotification[];
 }
 
 export const useNotificationsStore = create<NotificationsState>((set, get) => ({
@@ -103,6 +104,13 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
         reviewNotes
       };
       
+      // Show toast when alert is reviewed
+      toast({
+        title: "Fraud alert reviewed",
+        description: `The alert has been ${reviewNotes?.includes('Confirmed') ? 'confirmed' : 'dismissed'} as fraud.`,
+        variant: reviewNotes?.includes('Confirmed') ? "destructive" : "default",
+      });
+      
       return {
         notifications: updatedNotifications,
         unreadCount: state.notifications[notificationIndex].read ? state.unreadCount : state.unreadCount - 1
@@ -110,5 +118,9 @@ export const useNotificationsStore = create<NotificationsState>((set, get) => ({
     });
   },
   
-  getUnreadCount: () => get().unreadCount
+  getUnreadCount: () => get().unreadCount,
+  
+  getUnreviewedNotifications: () => {
+    return get().notifications.filter(notification => !notification.reviewed);
+  }
 }));

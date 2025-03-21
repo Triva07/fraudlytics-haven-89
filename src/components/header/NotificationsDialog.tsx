@@ -6,12 +6,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle, AlertTriangle, Clock, Info, ShieldAlert } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Clock, Info, ShieldAlert, Filter } from 'lucide-react';
 import Badge from '@/components/ui-custom/Badge';
 import { cn } from '@/lib/utils';
 import { useNotificationsStore, FraudNotification } from '@/store/notificationsStore';
 import FraudReviewDialog from '@/components/fraud/FraudReviewDialog';
 import { formatDistanceToNow } from 'date-fns';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface NotificationsDialogProps {
   open: boolean;
@@ -36,6 +37,7 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
   const { notifications, markAsRead } = useNotificationsStore();
   const [selectedFraudNotification, setSelectedFraudNotification] = useState<FraudNotification | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [filterValue, setFilterValue] = useState<string>("all");
   
   const [generalNotifications, setGeneralNotifications] = React.useState<GeneralNotification[]>([
     {
@@ -110,9 +112,16 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
     }
   };
 
+  // Filter notifications based on filter value
+  const filteredFraudNotifications = filterValue === "all" 
+    ? notifications 
+    : filterValue === "unreviewed" 
+      ? notifications.filter(n => !n.reviewed)
+      : notifications.filter(n => n.reviewed);
+
   // Combine both types of notifications
   const allNotifications = [
-    ...notifications.map(n => ({
+    ...filteredFraudNotifications.map(n => ({
       id: n.id,
       title: n.title,
       description: n.description,
@@ -142,15 +151,32 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Notifications</span>
-              {unreadCount > 0 && (
-                <Badge variant="danger" size="sm">
-                  {unreadCount}
-                </Badge>
-              )}
-            </DialogTitle>
+            <div className="flex items-center justify-between mb-2">
+              <DialogTitle className="flex items-center">
+                <span>Notifications</span>
+                {unreadCount > 0 && (
+                  <Badge variant="danger" size="sm" className="ml-2">
+                    {unreadCount}
+                  </Badge>
+                )}
+              </DialogTitle>
+            </div>
+            
+            <div className="mb-4">
+              <ToggleGroup type="single" value={filterValue} onValueChange={(value) => setFilterValue(value || "all")}>
+                <ToggleGroupItem value="all" className="text-xs">
+                  All
+                </ToggleGroupItem>
+                <ToggleGroupItem value="unreviewed" className="text-xs">
+                  Unreviewed
+                </ToggleGroupItem>
+                <ToggleGroupItem value="reviewed" className="text-xs">
+                  Reviewed
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </div>
           </DialogHeader>
+          
           <div className="space-y-4 max-h-[450px] overflow-y-auto pr-2">
             {allNotifications.length > 0 ? (
               allNotifications.map(notification => (
@@ -159,7 +185,8 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
                   className={cn(
                     "flex items-start space-x-4 p-4 rounded-lg border cursor-pointer",
                     notification.read ? "bg-background" : "bg-muted/30",
-                    notification.type === 'fraud' && !notification.read && "border-fraud/50"
+                    notification.type === 'fraud' && !notification.read && "border-fraud/50",
+                    notification.fraudData?.reviewed && "bg-muted/10 border-muted"
                   )}
                   onClick={() => {
                     if (notification.fraudData) {
@@ -180,7 +207,7 @@ const NotificationsDialog: React.FC<NotificationsDialogProps> = ({
                       </h4>
                       {notification.type === 'fraud' && (
                         <Badge 
-                          variant="danger" 
+                          variant={notification.fraudData?.reviewed ? 'default' : 'danger'}
                           size="sm"
                         >
                           {notification.fraudData?.reviewed ? 'Reviewed' : 'Needs Review'}
