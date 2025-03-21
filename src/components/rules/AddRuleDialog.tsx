@@ -76,7 +76,6 @@ const AddRuleDialog: React.FC<AddRuleDialogProps> = ({
     toast({
       title: "Rule created",
       description: `${values.name} has been added to your rules`,
-      variant: "success",
     });
     
     form.reset();

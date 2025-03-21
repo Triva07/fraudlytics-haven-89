@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -17,6 +17,8 @@ import Badge from '@/components/ui-custom/Badge';
 import SearchDialog from '@/components/header/SearchDialog';
 import NotificationsDialog from '@/components/header/NotificationsDialog';
 import SettingsDialog from '@/components/header/SettingsDialog';
+import { testGeminiAPI } from '@/utils/fraudDetection';
+import { useToast } from '@/hooks/use-toast';
 
 interface NavItem {
   name: string;
@@ -27,6 +29,7 @@ interface NavItem {
 const Header: React.FC = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -54,6 +57,23 @@ const Header: React.FC = () => {
       icon: <BarChart2 className="w-4 h-4" />
     },
   ];
+
+  React.useEffect(() => {
+    const testAPI = async () => {
+      const isWorking = await testGeminiAPI();
+      if (isWorking) {
+        console.log("Gemini API connected successfully");
+      } else {
+        toast({
+          title: "API Connection Error",
+          description: "Could not connect to Gemini API. Some features may be limited.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    testAPI();
+  }, [toast]);
 
   const headerVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -127,7 +147,7 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <Shield className="w-8 h-8 mr-2 text-primary" />
-            <span className="text-xl font-medium tracking-tight">FraudShield</span>
+            <span className="text-xl font-medium tracking-tight">SubPaisa</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -233,7 +253,7 @@ const Header: React.FC = () => {
             <div className="mb-8">
               <Link to="/" className="flex items-center">
                 <Shield className="w-8 h-8 mr-2 text-primary" />
-                <span className="text-xl font-medium tracking-tight">FraudShield</span>
+                <span className="text-xl font-medium tracking-tight">SubPaisa</span>
               </Link>
             </div>
             

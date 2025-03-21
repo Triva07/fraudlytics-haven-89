@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +32,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const [settings, setSettings] = React.useState({
-    darkMode: false,
+    darkMode: document.documentElement.classList.contains('dark'),
     emailNotifications: true,
     pushNotifications: true,
     highRiskAlerts: true,
@@ -40,19 +40,61 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     autoRefresh: true,
   });
 
+  // Initialize settings from localStorage on component mount
+  useEffect(() => {
+    // Load dark mode setting
+    const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    // Load other settings if they exist in localStorage
+    const savedEmailNotifications = localStorage.getItem('emailNotifications') !== 'false';
+    const savedPushNotifications = localStorage.getItem('pushNotifications') !== 'false';
+    const savedHighRiskAlerts = localStorage.getItem('highRiskAlerts') !== 'false';
+    const savedTwoFactorAuth = localStorage.getItem('twoFactorAuth') === 'true';
+    const savedAutoRefresh = localStorage.getItem('autoRefresh') !== 'false';
+    
+    setSettings({
+      darkMode: savedDarkMode,
+      emailNotifications: savedEmailNotifications,
+      pushNotifications: savedPushNotifications,
+      highRiskAlerts: savedHighRiskAlerts,
+      twoFactorAuth: savedTwoFactorAuth,
+      autoRefresh: savedAutoRefresh,
+    });
+  }, [open]);
+
   const handleToggle = (setting: keyof typeof settings) => {
+    const newValue = !settings[setting];
+    
+    // Update state
     setSettings({
       ...settings,
-      [setting]: !settings[setting],
+      [setting]: newValue,
     });
+    
+    // Handle dark mode toggle
+    if (setting === 'darkMode') {
+      document.documentElement.classList.toggle('dark', newValue);
+      localStorage.setItem('darkMode', newValue.toString());
+    } else {
+      // Store other settings
+      localStorage.setItem(setting, newValue.toString());
+    }
   };
 
   const saveSettings = () => {
+    // Save all settings to localStorage
+    Object.entries(settings).forEach(([key, value]) => {
+      localStorage.setItem(key, value.toString());
+    });
+    
+    // Apply dark mode
+    document.documentElement.classList.toggle('dark', settings.darkMode);
+    
     toast({
       title: "Settings saved",
       description: "Your preferences have been updated",
-      variant: "success",
     });
+    
     onOpenChange(false);
   };
 
