@@ -1,3 +1,4 @@
+
 import { SubpaisaTransaction } from "@/models/Transaction";
 import { Transaction } from "@/utils/mockData";
 
@@ -419,4 +420,528 @@ export const rawTransactionData: SubpaisaTransaction[] = [
     transaction_payment_mode_anonymous: 2,
     payment_gateway_bank_anonymous: 25,
     payer_browser_anonymous: 1605,
-    payer_email_anonymous: "5c15
+    payer_email_anonymous: "5c15cbf1a1020388753a6e584f063799e288cd53ad09cbdc30479247efcabf6d",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX502.0",
+    transaction_id_anonymous: "ANON_172893",
+    payee_id_anonymous: "ANON_23"
+  },
+  {
+    transaction_amount: 321.24,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 6,
+    payment_gateway_bank_anonymous: 35,
+    payer_browser_anonymous: 3063,
+    payer_email_anonymous: "badc41503607b515602ea0f70dcf83c41eee4bbb16b0609a10327c2972103f19",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX587.0",
+    transaction_id_anonymous: "ANON_172894",
+    payee_id_anonymous: "ANON_126"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "eb7f1d9acf76c1856d023b1d6422e7542e9f73be18bbafb73252c732f3738226",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX815.0",
+    transaction_id_anonymous: "ANON_172895",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 126,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 3783,
+    payer_email_anonymous: "7b29c46d8b3a25ecdff0a494e57b1a2e7053ee66dc93b613879562071dffc7de",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX101.0",
+    transaction_id_anonymous: "ANON_172896",
+    payee_id_anonymous: "ANON_10"
+  },
+  {
+    transaction_amount: 792,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 2,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 1959,
+    payer_email_anonymous: "4384daa7fb6b0e0469c2bfe5a87691c355e98f6e657ac6214c94f2fb6a70c246",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX755.0",
+    transaction_id_anonymous: "ANON_172897",
+    payee_id_anonymous: "ANON_10"
+  },
+  {
+    transaction_amount: 497,
+    transaction_date: "06-11-2024 23:56",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 3259,
+    payer_email_anonymous: "2612a9c65c5ec5eab9f36030aa2fae845e7ad2b2f2a5e9a64378451e247e7472",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX505.0",
+    transaction_id_anonymous: "ANON_172898",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 299,
+    transaction_date: "06-11-2024 23:57",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 11,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 1958,
+    payer_email_anonymous: "b8688ebf14d0ae744f45013dce9867628fae89b0c451ec46a858d861a45e683a",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX864.0",
+    transaction_id_anonymous: "ANON_172899",
+    payee_id_anonymous: "ANON_1"
+  },
+  {
+    transaction_amount: 305,
+    transaction_date: "06-11-2024 23:57",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 1493,
+    payer_email_anonymous: "d795743fb11c99c4e1e6213b477205548630855812a86c87b19af7e339c520cc",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX358.0",
+    transaction_id_anonymous: "ANON_172900",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 10,
+    transaction_date: "06-11-2024 23:57",
+    transaction_channel: "w",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "ed340a2dbe10dda41f6f3d13062d039cb879008fc2106f711587f46c61794bab",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "",
+    transaction_id_anonymous: "ANON_172901",
+    payee_id_anonymous: "ANON_0"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:57",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 384,
+    payer_email_anonymous: "c3a6aad7bef71335fa8aeb22d528240d51751cf69eec2cb7d88ae19175582151",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX425.0",
+    transaction_id_anonymous: "ANON_172902",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 126,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 3783,
+    payer_email_anonymous: "7b29c46d8b3a25ecdff0a494e57b1a2e7053ee66dc93b613879562071dffc7de",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX101.0",
+    transaction_id_anonymous: "ANON_172903",
+    payee_id_anonymous: "ANON_10"
+  },
+  {
+    transaction_amount: 188,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 2721,
+    payer_email_anonymous: "110a4df77453017e1de84bdee90e154717998af1fe04df8999a9ca13680ea32e",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX731.0",
+    transaction_id_anonymous: "ANON_172904",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 299,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 11,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 2147,
+    payer_email_anonymous: "ab3b2ede1c2457ca238dfb02828795b6c6ee9cdb7b96fa664d1ad5655e028294",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX802.0",
+    transaction_id_anonymous: "ANON_172905",
+    payee_id_anonymous: "ANON_1"
+  },
+  {
+    transaction_amount: 299,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 11,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 3562,
+    payer_email_anonymous: "be6e88c84cfd1eedb51af11e706b42737db984ae51f3877f31a5ab0964df23b3",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX471.0",
+    transaction_id_anonymous: "ANON_172906",
+    payee_id_anonymous: "ANON_1"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 3944,
+    payer_email_anonymous: "53834f1fa0ea80a8a56a43564ba80f0b3840162997acf65874ca240423b2888f",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX289.0",
+    transaction_id_anonymous: "ANON_172907",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 10,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 32,
+    payer_browser_anonymous: 3788,
+    payer_email_anonymous: "fc68a1f4c7228c9a427d9e9a960146fac71c3ac8321ddd1a612162c95b2f1cab",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX663.0",
+    transaction_id_anonymous: "ANON_172908",
+    payee_id_anonymous: "ANON_14"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 509,
+    payer_email_anonymous: "21651eb5ca18b5f9498b09df9428076888d9b001a4dc8a1742ee61a1fca46e16",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX057.0",
+    transaction_id_anonymous: "ANON_172909",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 100,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "f23deb6c34b6b6afa858f323af7af9552e68b705a75d2aa2f1cad2e0e8c5c677",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX898.0",
+    transaction_id_anonymous: "ANON_172910",
+    payee_id_anonymous: "ANON_99"
+  },
+  {
+    transaction_amount: 185,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 1611,
+    payer_email_anonymous: "e23c219ce9beeadae8c09d235fae08ae06c55fdcd359e6ad47ba7ea5218a18ec",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX975.0",
+    transaction_id_anonymous: "ANON_172911",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 700,
+    transaction_date: "06-11-2024 23:58",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 3259,
+    payer_email_anonymous: "7972cc9fd48b5d3a0bb6b0ce80e328a1e93e2143367b1574d819ccb699b30e2a",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX387.0",
+    transaction_id_anonymous: "ANON_172912",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 1611,
+    payer_email_anonymous: "4cee084c5277eac46f98ab32b9c03d53513874f25459620ddd9d0a7498899f23",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX126.0",
+    transaction_id_anonymous: "ANON_172913",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 710,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "w",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "ed340a2dbe10dda41f6f3d13062d039cb879008fc2106f711587f46c61794bab",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "",
+    transaction_id_anonymous: "ANON_172914",
+    payee_id_anonymous: "ANON_0"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "65d5a1d80a09536e3c6042ac5b2a15778bb3ae4859f15032a887b15fc4829ac5",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX832.0",
+    transaction_id_anonymous: "ANON_172915",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 3063,
+    payer_email_anonymous: "605f48f9ab0c15dfb65861affad4ced92a7f6582bbddf00dce2625705feae338",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX501.0",
+    transaction_id_anonymous: "ANON_172916",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 2883,
+    payer_email_anonymous: "c9188d1fd89064df3073b393a76050b240fd81e5387a57f547671473f2b3ddac",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX617.0",
+    transaction_id_anonymous: "ANON_172917",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 205.9,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "W",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 12,
+    payer_email_anonymous: "8b758e723ac653c65ed44667752fca48df53d6a97c6baf15c0de5413dcb24c15",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX031.0",
+    transaction_id_anonymous: "ANON_172918",
+    payee_id_anonymous: "ANON_3"
+  },
+  {
+    transaction_amount: 299,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 11,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 1047,
+    payer_email_anonymous: "266d0c12b407e633921b47346da1c5a1af16163865c39d09fd3ef353aee02238",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX583.0",
+    transaction_id_anonymous: "ANON_172919",
+    payee_id_anonymous: "ANON_1"
+  },
+  {
+    transaction_amount: 185,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 1611,
+    payer_email_anonymous: "e23c219ce9beeadae8c09d235fae08ae06c55fdcd359e6ad47ba7ea5218a18ec",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX975.0",
+    transaction_id_anonymous: "ANON_172920",
+    payee_id_anonymous: "ANON_348"
+  },
+  {
+    transaction_amount: 126,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 0,
+    payment_gateway_bank_anonymous: 6,
+    payer_browser_anonymous: 3661,
+    payer_email_anonymous: "4a66df51a734386b0176e03828c4425c4bb469c19362661ed2f24bb0e104b4e3",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX155.0",
+    transaction_id_anonymous: "ANON_172921",
+    payee_id_anonymous: "ANON_10"
+  },
+  {
+    transaction_amount: 100,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "w",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 1605,
+    payer_email_anonymous: "ed340a2dbe10dda41f6f3d13062d039cb879008fc2106f711587f46c61794bab",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "",
+    transaction_id_anonymous: "ANON_172922",
+    payee_id_anonymous: "ANON_0"
+  },
+  {
+    transaction_amount: 299,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 11,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 3721,
+    payer_email_anonymous: "8f9cb7af1e4494eb3d290f8807328dac5c3352177583b135af196a4c3991c02d",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX609.0",
+    transaction_id_anonymous: "ANON_172923",
+    payee_id_anonymous: "ANON_1"
+  },
+  {
+    transaction_amount: 200,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "w",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 10,
+    payment_gateway_bank_anonymous: 0,
+    payer_browser_anonymous: 3183,
+    payer_email_anonymous: "ed340a2dbe10dda41f6f3d13062d039cb879008fc2106f711587f46c61794bab",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "",
+    transaction_id_anonymous: "ANON_172924",
+    payee_id_anonymous: "ANON_0"
+  },
+  {
+    transaction_amount: 188,
+    transaction_date: "06-11-2024 23:59",
+    transaction_channel: "mobile",
+    is_fraud: 0,
+    transaction_payment_mode_anonymous: 12,
+    payment_gateway_bank_anonymous: 1,
+    payer_browser_anonymous: 2721,
+    payer_email_anonymous: "110a4df77453017e1de84bdee90e154717998af1fe04df8999a9ca13680ea32e",
+    payee_ip_anonymous: "7273713fb5d4f010d68e1ff0443134eb215070a47b93d5895e327c3347310cc4",
+    payer_mobile_anonymous: "XXXXX731.0",
+    transaction_id_anonymous: "ANON_172925",
+    payee_id_anonymous: "ANON_348"
+  }
+];
+
+// Function to convert the raw data to the format expected by the Transaction component
+export const getFormattedTransactions = (): Transaction[] => {
+  return rawTransactionData.map((transaction, index) => {
+    // Ensure status is one of the allowed values
+    const status: "completed" | "pending" | "failed" | "flagged" = 
+      transaction.is_fraud ? 'flagged' : 'completed';
+    
+    // Map channel to allowed values
+    const channel: 'mobile' | 'web' | 'atm' | 'in-store' | 'api' = 
+      transaction.transaction_channel.toLowerCase() === 'mobile' 
+        ? 'mobile' 
+        : 'web';
+    
+    // Create a valid paymentMode
+    const paymentMode: 'credit_card' | 'debit_card' | 'bank_transfer' | 'upi' | 'wallet' = 
+      transaction.transaction_payment_mode_anonymous === 10 ? 'credit_card' :
+      transaction.transaction_payment_mode_anonymous === 11 ? 'debit_card' :
+      transaction.transaction_payment_mode_anonymous === 0 ? 'bank_transfer' :
+      transaction.transaction_payment_mode_anonymous === 2 ? 'upi' : 'wallet';
+    
+    // Create a valid paymentGateway
+    const paymentGateway: 'stripe' | 'paypal' | 'braintree' | 'razorpay' | 'internal' = 
+      transaction.payment_gateway_bank_anonymous === 6 ? 'razorpay' :
+      transaction.payment_gateway_bank_anonymous === 0 ? 'stripe' :
+      transaction.payment_gateway_bank_anonymous === 5 ? 'paypal' :
+      transaction.payment_gateway_bank_anonymous === 14 ? 'braintree' : 'internal';
+    
+    return {
+      id: transaction.transaction_id_anonymous,
+      amount: transaction.transaction_amount,
+      currency: "INR",
+      timestamp: new Date(transaction.transaction_date).toISOString(),
+      status: status,
+      payer: {
+        id: `payer-${index}`,
+        name: `Payer ${index} (${transaction.payer_email_anonymous.substring(0, 8)}...)`,
+        bank: `Bank ${transaction.payment_gateway_bank_anonymous}`
+      },
+      payee: {
+        id: transaction.payee_id_anonymous,
+        name: `Payee ${transaction.payee_id_anonymous}`,
+        bank: `Bank ${transaction.payment_gateway_bank_anonymous}`
+      },
+      channel: channel,
+      paymentMode: paymentMode,
+      paymentGateway: paymentGateway,
+      is_fraud_predicted: Boolean(transaction.is_fraud),
+      is_fraud_reported: Boolean(transaction.is_fraud),
+      fraud_score: transaction.is_fraud ? 0.85 : 0.15,
+      fraud_reason: transaction.is_fraud ? "Unusual transaction pattern" : null,
+      fraud_source: transaction.is_fraud ? "model" : null
+    };
+  });
+};
+
+// Get transaction stats
+export const getTransactionStats = () => {
+  const totalTransactions = rawTransactionData.length;
+  const fraudulentTransactions = rawTransactionData.filter(t => t.is_fraud === 1).length;
+  
+  return {
+    totalTransactions,
+    fraudulentTransactions,
+    fraudPercentage: (fraudulentTransactions / totalTransactions) * 100,
+    totalAmount: rawTransactionData.reduce((sum, t) => sum + t.transaction_amount, 0),
+    webTransactions: rawTransactionData.filter(t => t.transaction_channel.toLowerCase() === 'w').length,
+    mobileTransactions: rawTransactionData.filter(t => t.transaction_channel.toLowerCase() === 'mobile').length
+  };
+};
